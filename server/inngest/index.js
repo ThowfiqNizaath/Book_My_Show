@@ -15,7 +15,6 @@ const syncUserCreation = inngest.createFunction(
             email: email_addresses[0].email_address,
             image: image_url
         }
-        console.log(event)
         await userModel.create(userData);
     }
 )
