@@ -1,6 +1,7 @@
 
 import stripe from "stripe";
 import bookingModel from "../models/bookingSchema.js";
+import { inngest } from "../inngest/index.js";
 
 export const stripeWebhooks = async(request, response) => {
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
@@ -25,8 +26,14 @@ export const stripeWebhooks = async(request, response) => {
               isPaid: true,
               paymentLink: "",
             });
-         }
-           break;
+
+            await inngest.send({
+                name: 'app/show.booked',
+                data: {bookingId}
+            })
+
+            break;
+        }
 
          default:
            console.log("Unhandled event type:", event.type);
