@@ -6,6 +6,7 @@ import { dateFormate } from '../lib/dateFormate'
 import timeFormate from '../lib/timeFormate'
 import { useAppContext } from '../context/appContext'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
 
 const Mybookings = () => {
   const [bookings, setBookings] = useState([])
@@ -71,7 +72,7 @@ const Mybookings = () => {
             <div className="flex items-center gap-4 mb-3">
               <p className="text-2xl font-semibold">{currency}{item.amount}</p>
               {
-                !item.isPaid && <button className="bg-primary px-4 py-1.5 text-sm rounded-full font-medium cursor-pointer">Pay Now</button>
+                !item.isPaid && <Link to={item.paymentLink} className="bg-primary px-4 py-1.5 text-sm rounded-full font-medium cursor-pointer">Pay Now</Link>
               }
             </div>
             <div className="text-sm">
