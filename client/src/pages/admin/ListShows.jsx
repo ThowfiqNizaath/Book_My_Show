@@ -3,45 +3,59 @@ import { dummyShowsData } from '../../assets/assets'
 import Loading from '../../components/Loading'
 import Title from '../../components/admin/Title'
 import { dateFormate } from '../../lib/dateFormate'
+import toast from 'react-hot-toast'
+import { useAppContext } from '../../context/appContext'
 
 const ListShows = () => {
   const [shows, setShows] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loading2, setLoading2] = useState(false)
   const currency = import.meta.env.VITE_CURRENCY;
+  const {axios, getToken, user} = useAppContext();
 
   const getAllShows = async() => {
     try{
-      setShows([
-        {
-          movie: dummyShowsData[0],
-          showDateTime: "2025-07-24T01:00:00.000Z",
-          showPrice: 59,
-          occupiedSeats: {
-            A1: "user_1",
-            B1: "user_2",
-            C1: "user_3",
-          },
+      const { data } = await axios.get("/api/admin/all-shows", {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
         },
-        {
-          movie: dummyShowsData[0],
-          showDateTime: "2025-07-24T01:00:00.000Z",
-          showPrice: 59,
-          occupiedSeats: {
-            A1: "user_1",
-            B1: "user_2",
-            C1: "user_3",
-          },
-        },
-      ]);
+      });
+      console.log(data)
+      if(data.success){
+        setShows(data.shows)
+      }else{
+        toast.error(data.message)
+      }
       setLoading(false)
     }catch(error){
         console.log(error)
     }
   }
 
+  const handleDeletePrev = async() => {
+    setLoading2(true);
+    try {
+      const {data} = await axios.delete("/api/admin/delete-shows",{
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      })
+      if(data.success){
+        toast.success(data.message)
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+    setLoading2(false)
+  }
+
   useEffect(() => {
-    getAllShows()
-  },[])
+    if(user){
+      getAllShows();
+    }
+  },[user])
   return !loading ? (
     <>
       <Title text1="List" text2="Shows" />
@@ -56,18 +70,31 @@ const ListShows = () => {
             </tr>
           </thead>
           <tbody>
-            {
-              shows.map((show, index) => (
-                <tr key={index} className="border-b border-primary/10 bg-primary/5 even:bg-primary/15">
-                    <td className="p-2 min-w-45">{show.movie.title}</td>
-                    <td className="p-2">{dateFormate(show.showDateTime)}</td>
-                    <td className="p-2">{Object.keys(show.occupiedSeats).length}</td>
-                    <td className="p-2">{currency} {Object.keys(show.occupiedSeats).length * show.showPrice}</td>
-                </tr>
-              ))
-            }
+            {shows.map((show, index) => (
+              <tr
+                key={index}
+                className="border-b border-primary/10 bg-primary/5 even:bg-primary/15"
+              >
+                <td className="p-2 min-w-45">{show.movie.title}</td>
+                <td className="p-2">{dateFormate(show.showDateTime)}</td>
+                <td className="p-2">
+                  {Object.keys(show.occupiedSeats).length}
+                </td>
+                <td className="p-2">
+                  {currency}{" "}
+                  {Object.keys(show.occupiedSeats).length * show.showPrice}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
+        <button 
+        onClick={handleDeletePrev}
+        className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer"
+        disabled={loading2}
+        >
+          Delete Prev Movies
+        </button>
       </div>
     </>
   ) : (

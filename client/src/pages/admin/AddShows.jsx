@@ -3,6 +3,8 @@ import { dummyDateTimeData, dummyShowsData } from "../../assets/assets";
 import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react";
 import Title from "../../components/admin/Title";
 import { kConverter } from "../../lib/kConverter";
+import { useAppContext } from "../../context/appContext";
+import toast from "react-hot-toast";
 
 const AddShows = () => {
   const currency = import.meta.env.VITE_CURRENCY;
@@ -11,10 +13,22 @@ const AddShows = () => {
   const [dateTimeSelection, setDateTimeSelection] = useState({});
   const [dateTimeInput, setDateTimeInput] = useState("");
   const [showPrice, setShowPrice] = useState("");
+  const [addShow, setAddShow] = useState(false)
+  const {axios, getToken, user, image_base_url} = useAppContext();
 
   const fetchNowPlayingMovies = async () => {
     try {
-      setNowPlayingMovies(dummyShowsData);
+      const { data } = await axios.get("/api/show/now-playing", {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      });
+      if(data.success){
+        setNowPlayingMovies(data.movies)
+        // console.log(data.movies)
+      }else{
+        console.log(data.message)
+      }
     } catch (err) {
       console.log(err);
     }
@@ -23,7 +37,7 @@ const AddShows = () => {
   const handleDateTimeAdd = () => {
     if (!dateTimeInput) return;
     const [date, time] = dateTimeInput.split("T");
-    console.log(date, " " , time)
+    // console.log(date, " " , time)
     if (!date || !time) return;
 
     setDateTimeSelection((prev) => {
@@ -56,16 +70,53 @@ const AddShows = () => {
       })
   };
 
-  useEffect(() => {
-    fetchNowPlayingMovies();
-  }, []);
+  const handleSubmit = async() => {
+    try{
+     setAddShow(true);
+     if(!selectedMovie || Object.keys(dateTimeSelection).length === 0 || !showPrice){
+      return toast('Missing required fields')
+     }
+     const showInput = Object.entries(dateTimeSelection).map(([date, time]) => ({date,time}));
+     const payload = {
+       movieId: selectedMovie,
+       showInput,
+       showPrice: Number(showPrice)
+     }
+
+     const { data } = await axios.post("/api/show/add", payload, {
+       headers: {
+         Authorization: `Bearer ${await getToken()}`,
+       },
+     });
+     if(data.success){
+      toast.success(data.message);
+      setSelectedMovie(null)
+      setDateTimeSelection({})
+      setShowPrice("")
+     }else{
+      toast.error(data.message)
+     }
+    }catch(err){
+      console.log(err)
+      toast.error("Error occured. Please try again later.")
+    }
+    setAddShow(false)
+  }
 
   useEffect(() => {
-    console.log(dateTimeSelection);
-    console.log(dateTimeInput);
-    console.log(selectedMovie);
-    console.log(showPrice);
-  }, [dateTimeSelection, dateTimeInput, selectedMovie, showPrice]);
+    if(user){
+      fetchNowPlayingMovies();
+    }
+    // return () => console.log("Unmounted")
+  }, []);
+
+  // useEffect(() => {
+  //   // console.clear()
+  //   console.log(dateTimeSelection);
+  //   console.log(dateTimeInput);
+  //   console.log(selectedMovie);
+  //   console.log(showPrice);
+  // }, [dateTimeSelection, dateTimeInput, selectedMovie, showPrice]);
 
   return (
     <>
@@ -75,7 +126,7 @@ const AddShows = () => {
         <div className="group flex flex-wrap gap-4 mt-4 w-max">
           {nowPlayingMovies.map((movie, index) => (
             <div
-              key={movie._id}
+              key={movie.id}
               onClick={() => {
                 setSelectedMovie(movie.id);
               }}
@@ -83,7 +134,7 @@ const AddShows = () => {
             >
               <div className="relative rounded-lg overflow-hidden">
                 <img
-                  src={movie.poster_path}
+                  src={`${image_base_url}${movie.poster_path}`}
                   alt=""
                   className="w-full object-cover brightness-90"
                 />
@@ -179,7 +230,10 @@ const AddShows = () => {
         )
       }
 
-      <button className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer">Add Show</button>
+      <button className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer"
+      onClick={handleSubmit}
+      disabled={addShow}
+      >Add Show</button>
     </>
   );
 };
