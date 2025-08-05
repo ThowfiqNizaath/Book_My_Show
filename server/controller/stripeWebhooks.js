@@ -1,4 +1,3 @@
-
 import stripe from "stripe";
 import bookingModel from "../models/bookingSchema.js";
 import { inngest } from "../inngest/index.js";
@@ -28,9 +27,9 @@ export const stripeWebhooks = async(request, response) => {
             });
 
             await inngest.send({
-                name: 'app/show.booked',
-                data: {bookingId}
-            })
+              name: "app/show.booked",
+              data: { bookingId },
+            });
         }
          break;
 
