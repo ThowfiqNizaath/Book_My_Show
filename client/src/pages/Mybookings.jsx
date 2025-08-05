@@ -39,10 +39,10 @@ const Mybookings = () => {
   },[user])
 
   return !loading ? (
-    <div className="relative px-6 md:px-16 lg:px-30 pt-30 md:pt-40 min-h-[80vh]">
+    <div className="relative px-6 md:px-16 lg:px-30 pt-30 md:pt-40 min-h-[80vh] pb-20">
       <BlurCirle top="100px" left="100px" />
       {/* <div className="border"> */}
-      <BlurCirle bottom="0px" left="600px" />
+        <BlurCirle left="750px" bottom="0px"/>
       {/* </div> */}
       <h1 className="text-lg md:text-xl font-medium mb-4">My Bookings</h1>
 
