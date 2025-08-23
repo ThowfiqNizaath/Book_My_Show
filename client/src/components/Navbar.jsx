@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
-import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react";
+import { MenuIcon, SearchIcon, TicketPlus, User2Icon, XIcon } from "lucide-react";
 import { SignIn, useAuth, useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { useAppContext } from "../context/appContext";
 
@@ -12,7 +12,7 @@ const Navbar = () => {
   const {openSignIn} = useClerk();
   const navigate = useNavigate();
   const {sessionId} = useAuth();
-  const {favoriteMovies} = useAppContext()
+  const {favoriteMovies, isAdmin} = useAppContext()
   //Functions
   function handleOpen(){
      setIsOpen(prev => !prev)
@@ -76,6 +76,17 @@ const Navbar = () => {
                   navigate("/my-bookings");
                 }}
               ></UserButton.Action>
+              {
+                isAdmin && <UserButton.Action
+                label="Admin Control"
+                labelIcon={<User2Icon width="15"/>}
+                onClick={() => {
+                  navigate("/admin")
+                }}
+                >
+
+                </UserButton.Action>
+              }
             </UserButton.MenuItems>
           </UserButton>
         )}

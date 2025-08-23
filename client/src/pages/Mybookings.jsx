@@ -42,7 +42,7 @@ const Mybookings = () => {
     <div className="relative px-6 md:px-16 lg:px-30 pt-30 md:pt-40 min-h-[80vh] pb-20 max-w-screen overflow-x-hidden">
       <BlurCirle top="100px" left="100px" />
       {/* <div className="border"> */}
-        <BlurCirle left="750px" bottom="0px"/>
+        <BlurCirle left="750px" bottom="100px"/>
       {/* </div> */}
       <h1 className="text-lg md:text-xl font-medium mb-4">My Bookings</h1>
 
