@@ -67,3 +67,13 @@ export const deletePreviousShows = async(req, res) => {
         res.json({success: false, message: err.message})
     }
 }
+
+export const deleteBookings = async(req, res) => {
+    try{
+        await bookingModel.deleteMany({})
+        res.json({success: true, message: "Bookings Deleted successfully!"})
+    }catch(err){
+        console.log(err)
+        res.json({success: false, message: err.message})
+    }
+}
