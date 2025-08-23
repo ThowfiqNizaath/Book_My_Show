@@ -1,6 +1,6 @@
 import express from "express"
 import { protectAdmin } from "../middleware/auth.js";
-import { deletePreviousShows, getAllBookings, getAllShows, getDashboardData, isAdmin } from "../controller/adminController.js";
+import { deleteBookings, deletePreviousShows, getAllBookings, getAllShows, getDashboardData, isAdmin } from "../controller/adminController.js";
 
 const adminRouter = express.Router();
 
@@ -9,5 +9,6 @@ adminRouter.get("/dashboard", protectAdmin, getDashboardData);
 adminRouter.get("/all-shows", protectAdmin, getAllShows);
 adminRouter.get("/all-bookings", protectAdmin, getAllBookings)
 adminRouter.delete("/delete-shows", protectAdmin, deletePreviousShows)
+adminRouter.delete("/delete-bookings", deleteBookings)
 
 export default adminRouter;

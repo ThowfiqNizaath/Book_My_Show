@@ -9,7 +9,7 @@ import { useAppContext } from '../../context/appContext'
 const ListShows = () => {
   const [shows, setShows] = useState([])
   const [loading, setLoading] = useState(true)
-  const [loading2, setLoading2] = useState(false)
+  // const [loading2, setLoading2] = useState(false)
   const currency = import.meta.env.VITE_CURRENCY;
   const {axios, getToken, user} = useAppContext();
 
@@ -32,24 +32,24 @@ const ListShows = () => {
     }
   }
 
-  const handleDeletePrev = async() => {
-    setLoading2(true);
-    try {
-      const {data} = await axios.delete("/api/admin/delete-shows",{
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      })
-      if(data.success){
-        toast.success(data.message)
-      }else{
-        toast.error(data.message)
-      }
-    } catch (error) {
-      console.error(error)
-    }
-    setLoading2(false)
-  }
+  // const handleDeletePrev = async() => {
+  //   setLoading2(true);
+  //   try {
+  //     const {data} = await axios.delete("/api/admin/delete-shows",{
+  //       headers: {
+  //         Authorization: `Bearer ${await getToken()}`,
+  //       },
+  //     })
+  //     if(data.success){
+  //       toast.success(data.message)
+  //     }else{
+  //       toast.error(data.message)
+  //     }
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  //   setLoading2(false)
+  // }
 
   useEffect(() => {
     if(user){
@@ -88,13 +88,13 @@ const ListShows = () => {
             ))}
           </tbody>
         </table>
-        <button 
+        {/* <button 
         onClick={handleDeletePrev}
         className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer"
         disabled={loading2}
         >
           Delete Prev Movies
-        </button>
+        </button> */}
       </div>
     </>
   ) : (
